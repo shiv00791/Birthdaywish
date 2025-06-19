@@ -11,6 +11,7 @@
       background: linear-gradient(to top, #fff0f5, #ffe4e1);
       font-family: 'Segoe UI', sans-serif;
       text-align: center;
+      overflow-x: hidden;
     }
 
     .container {
@@ -44,7 +45,7 @@
 
     #userImage {
       display: none;
-      margin-top: 20px;
+      margin: 20px auto;
       width: 250px;
       height: 250px;
       object-fit: cover;
@@ -86,6 +87,21 @@
       font-size: 28px;
       color: #28a745;
       font-weight: bold;
+      animation: pop 1s ease forwards, rainbow 2s infinite;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes rainbow {
+      0% { color: #ff007f; }
+      25% { color: #ff8c00; }
+      50% { color: #1e90ff; }
+      75% { color: #32cd32; }
+      100% { color: #ff007f; }
     }
 
     @media (max-width: 600px) {
@@ -132,7 +148,6 @@
         return;
       }
 
-      // Read and display the image
       const reader = new FileReader();
       reader.onload = function(e) {
         const img = document.getElementById('userImage');
@@ -141,16 +156,11 @@
       }
       reader.readAsDataURL(imgFile);
 
-      // Show birthday message
       document.getElementById('wishText').innerText = `🎂 Happy Birthday ${name}! 🎉`;
-
-      // Play song
       document.getElementById('song').play();
 
-      // Start balloons/confetti
       launchBalloons();
 
-      // Show wish box after 3 seconds
       setTimeout(() => {
         document.getElementById('wishBox').style.display = 'block';
       }, 3000);
@@ -179,13 +189,13 @@
         confetti({
           particleCount: 5,
           angle: 60,
-          spread: 55,
+          spread: 70,
           origin: { x: 0 }
         });
         confetti({
           particleCount: 5,
           angle: 120,
-          spread: 55,
+          spread: 70,
           origin: { x: 1 }
         });
 
