@@ -1,65 +1,198 @@
-<!-- index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Happy Birthday</title>
   <style>
-    body { text-align: center; font-family: sans-serif; background: #ffe; }
-    h1 { color: #e60073; font-size: 3em; }
-    #userImage { width: 200px; height: 200px; border-radius: 50%; display: none; }
-    #wishBox, #thanksMessage { display: none; margin-top: 20px; }
-    textarea { width: 80%; height: 100px; }
-    button { padding: 10px 20px; font-size: 16px; }
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to top, #fff0f5, #ffe4e1);
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+    }
+
+    .container {
+      padding: 30px 20px;
+    }
+
+    h2 {
+      font-size: 28px;
+      color: #d63384;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"], input[type="file"] {
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 18px;
+      width: 80%;
+      max-width: 300px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 12px 25px;
+      font-size: 18px;
+      background-color: #ff69b4;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #userImage {
+      display: none;
+      margin-top: 20px;
+      width: 250px;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 5px solid #ff69b4;
+    }
+
+    #wishText {
+      font-size: 30px;
+      color: #c2185b;
+      margin-top: 30px;
+    }
+
+    #wishBox {
+      display: none;
+      margin-top: 30px;
+    }
+
+    #wishBox label {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ff007f;
+    }
+
+    textarea {
+      width: 90%;
+      max-width: 400px;
+      height: 120px;
+      font-size: 18px;
+      padding: 10px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+
+    #thanksMessage {
+      display: none;
+      margin-top: 40px;
+      font-size: 28px;
+      color: #28a745;
+      font-weight: bold;
+    }
+
+    @media (max-width: 600px) {
+      h2 {
+        font-size: 24px;
+      }
+      #wishText {
+        font-size: 26px;
+      }
+      #thanksMessage {
+        font-size: 24px;
+      }
+    }
   </style>
 </head>
 <body>
-  <h2>Enter your name and picture</h2>
-  <input type="text" id="nameInput" placeholder="Your name" /><br><br>
-  <input type="file" id="imageInput" accept="image/*" /><br><br>
-  <button onclick="start()">Start</button>
+  <div class="container">
+    <h2>🎁 Enter Your Name and Picture 🎉</h2>
+    <input type="text" id="nameInput" placeholder="Your name" /><br>
+    <input type="file" id="imageInput" accept="image/*" /><br>
+    <button onclick="start()">Start</button>
 
-  <br><br>
-  <canvas id="confettiCanvas"></canvas>
-  <h1 id="wishText"></h1>
-  <img id="userImage" /><br><br>
-  <audio id="song" src="song.mp3"></audio>
+    <h1 id="wishText"></h1>
+    <img id="userImage" />
+    <audio id="song" src="song.mp3"></audio>
 
-  <div id="wishBox">
-    <textarea id="wishInput" placeholder="Make a wish..."></textarea><br>
-    <button onclick="sendWish()">Send Wish</button>
+    <div id="wishBox">
+      <label for="wishInput">💭 MAKE A WISH</label><br>
+      <textarea id="wishInput" placeholder="Type your wish here..."></textarea><br>
+      <button onclick="sendWish()">Send Wish</button>
+    </div>
+
+    <div id="thanksMessage">😊 Your all wishes comes true! 😊</div>
   </div>
-
-  <h2 id="thanksMessage">🎉 Your all wishes come true! 🎉</h2>
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   <script>
     function start() {
       const name = document.getElementById('nameInput').value;
       const imgFile = document.getElementById('imageInput').files[0];
-      if (!name || !imgFile) return alert("Please enter name and image");
 
+      if (!name || !imgFile) {
+        alert("Please enter your name and upload a picture.");
+        return;
+      }
+
+      // Read and display the image
       const reader = new FileReader();
       reader.onload = function(e) {
-        document.getElementById('userImage').src = e.target.result;
-        document.getElementById('userImage').style.display = 'block';
+        const img = document.getElementById('userImage');
+        img.src = e.target.result;
+        img.style.display = 'block';
       }
       reader.readAsDataURL(imgFile);
 
+      // Show birthday message
       document.getElementById('wishText').innerText = `🎂 Happy Birthday ${name}! 🎉`;
+
+      // Play song
       document.getElementById('song').play();
-      confetti();
-      setTimeout(() => document.getElementById('wishBox').style.display = 'block', 3000);
+
+      // Start balloons/confetti
+      launchBalloons();
+
+      // Show wish box after 3 seconds
+      setTimeout(() => {
+        document.getElementById('wishBox').style.display = 'block';
+      }, 3000);
     }
 
     function sendWish() {
       const wish = document.getElementById('wishInput').value;
+
       fetch("https://formsubmit.co/doremonnobita0075@gmail.com", {
         method: "POST",
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ message: wish })
       });
+
       document.getElementById('wishBox').style.display = 'none';
       document.getElementById('thanksMessage').style.display = 'block';
+    }
+
+    function launchBalloons() {
+      const duration = 10 * 1000;
+      const end = Date.now() + duration;
+
+      (function frame() {
+        confetti({
+          particleCount: 5,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 }
+        });
+        confetti({
+          particleCount: 5,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 }
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      })();
     }
   </script>
 </body>
