@@ -1,0 +1,66 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Happy Birthday</title>
+  <style>
+    body { text-align: center; font-family: sans-serif; background: #ffe; }
+    h1 { color: #e60073; font-size: 3em; }
+    #userImage { width: 200px; height: 200px; border-radius: 50%; display: none; }
+    #wishBox, #thanksMessage { display: none; margin-top: 20px; }
+    textarea { width: 80%; height: 100px; }
+    button { padding: 10px 20px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h2>Enter your name and picture</h2>
+  <input type="text" id="nameInput" placeholder="Your name" /><br><br>
+  <input type="file" id="imageInput" accept="image/*" /><br><br>
+  <button onclick="start()">Start</button>
+
+  <br><br>
+  <canvas id="confettiCanvas"></canvas>
+  <h1 id="wishText"></h1>
+  <img id="userImage" /><br><br>
+  <audio id="song" src="song.mp3"></audio>
+
+  <div id="wishBox">
+    <textarea id="wishInput" placeholder="Make a wish..."></textarea><br>
+    <button onclick="sendWish()">Send Wish</button>
+  </div>
+
+  <h2 id="thanksMessage">🎉 Your all wishes come true! 🎉</h2>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <script>
+    function start() {
+      const name = document.getElementById('nameInput').value;
+      const imgFile = document.getElementById('imageInput').files[0];
+      if (!name || !imgFile) return alert("Please enter name and image");
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('userImage').src = e.target.result;
+        document.getElementById('userImage').style.display = 'block';
+      }
+      reader.readAsDataURL(imgFile);
+
+      document.getElementById('wishText').innerText = `🎂 Happy Birthday ${name}! 🎉`;
+      document.getElementById('song').play();
+      confetti();
+      setTimeout(() => document.getElementById('wishBox').style.display = 'block', 3000);
+    }
+
+    function sendWish() {
+      const wish = document.getElementById('wishInput').value;
+      fetch("https://formsubmit.co/doremonnobita0075@gmail.com", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: wish })
+      });
+      document.getElementById('wishBox').style.display = 'none';
+      document.getElementById('thanksMessage').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
